@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>VU Meter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      body {
+        background-color: #EFEFEF;
+      }
+      section {
+        text-align: center;
+      }
+      canvas {
+        padding: 0em;
+        margin: 0em;
+        background-color: #434343;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="main">
+      <canvas id="demo" width="100" height="400" data-val="0">No canvas</canvas>
+    </section>
+
+    <div style="text-align: center;">
+        <input type="range" id="demoInput" min="0" max="100" value="0">
+    </div>
+
+    <script src="/vumeter.js"></script>
+    <script>
+      window.onload = function(){
+        var demo = document.getElementById('demo');
+        vumeter(demo, {
+          "boxCount": 20,
+          "boxGapFraction": 0.2,
+          "title": "Widgets Per Second", 
+          "max": 100,
+          "markInterval": 2,
+          "bigMarkInterval": 10,
+          "redLinePoint": 0.85,
+          "autoScale": false
+        });
+
+        var demoInput = document.getElementById('demoInput');
+        demoInput.onchange = function(e){
+            console.log(this.value);
+            demo.setAttribute('data-val', this.value);
+        };
+      };
+    </script>
+    
+  </body>
+</html>

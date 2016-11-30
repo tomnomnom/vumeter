@@ -1,0 +1,108 @@
+function vumeter(elem, config){
+
+    // Settings
+    var max             = config.max || 100;
+    var markInterval    = config.markInterval || 10;
+    var bigMarkInterval = config.bigMarkInterval || 50;
+    var boxCount        = config.boxCount || 10;
+    var boxCountRed     = config.boxCountRed || 2;
+    var boxCountYellow  = config.boxCountYellow || 3;
+    var boxGapFraction  = config.boxGapFraction || 0.2;
+    var jitter          = config.jitter || 0.04;
+
+    // Derived and starting values
+    var width = elem.width;
+    var height = elem.height;
+    var curVal = 0;
+
+    // Gap between boxes and box height
+    var boxHeight = height / (boxCount + (boxCount+1)*boxGapFraction);
+    var boxGapY = boxHeight * boxGapFraction;
+
+    var boxWidth = width - (boxGapY*2);
+    var boxGapX = (width - boxWidth) / 2;
+
+    // Canvas starting state
+    var c = elem.getContext('2d');
+
+    // Main draw loop
+    var draw = function(){
+
+        var targetVal = parseInt(elem.dataset.val, 10);
+        if (jitter > 0 && targetVal > 0){
+            var amount = (Math.random()*jitter*max);
+            if (Math.random() > 0.5){
+                amount = -amount;
+            }
+            targetVal += amount;
+        }
+
+        // Gradual approach
+        if (curVal < targetVal){
+            curVal += (targetVal - curVal) / 5;
+        } else {
+            curVal -= (curVal - targetVal) / 5;
+        }
+        
+        c.save();
+        c.beginPath();
+        c.rect(0, 0, width, height);
+        c.fillStyle = 'rgb(32,32,32)';
+        c.fill();
+        c.restore();
+        drawBoxes(c, curVal);
+
+        requestAnimationFrame(draw);
+    };
+
+    // Draw the boxes
+    function drawBoxes(c, val){
+        c.save(); 
+        c.translate(boxGapX, boxGapY);
+        for (var i = 0; i < boxCount; i++){
+            var id = getId(i);
+
+            c.beginPath();
+            if (isOn(id, val)){
+                c.shadowBlur = 10;
+                c.shadowColor = getBoxColor(id, val);
+            }
+            c.rect(0, 0, boxWidth, boxHeight);
+            c.fillStyle = getBoxColor(id, val);
+            c.fill();
+            c.translate(0, boxHeight + boxGapY);
+        }
+        c.restore();
+    }
+
+    // Get the color of a box given it's ID and the current value
+    function getBoxColor(id, val){
+        // on colours
+        if (id > boxCount - boxCountRed){
+            return isOn(id, val)? 'rgba(240,0,0,0.9)' : 'rgba(90,0,0,0.9)';
+        }
+        if (id > boxCount - boxCountRed - boxCountYellow){
+            return isOn(id, val)? 'rgba(240,240,0,0.9)' : 'rgba(90,90,0,0.9)';
+        }
+        return isOn(id, val)? 'rgba(0,240,0,0.9)' : 'rgba(0,90,0,0.9)';
+    }
+
+    function getId(index){
+        // The ids are flipped, so zero is at the top and
+        // boxCount-1 is at the bottom. The values work
+        // the other way around, so align them first to
+        // make things easier to think about.
+        return Math.abs(index - (boxCount - 1)) + 1;
+    }
+
+    function isOn(id, val){
+        // We need to scale the input value (0-max)
+        // so that it fits into the number of boxes
+        var maxOn = Math.ceil((val/max) * boxCount);
+        return (id <= maxOn);
+    }
+
+    // Trigger the animation
+    draw();
+}
+
