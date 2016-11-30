@@ -2,13 +2,11 @@ function vumeter(elem, config){
 
     // Settings
     var max             = config.max || 100;
-    var markInterval    = config.markInterval || 10;
-    var bigMarkInterval = config.bigMarkInterval || 50;
     var boxCount        = config.boxCount || 10;
     var boxCountRed     = config.boxCountRed || 2;
     var boxCountYellow  = config.boxCountYellow || 3;
     var boxGapFraction  = config.boxGapFraction || 0.2;
-    var jitter          = config.jitter || 0.04;
+    var jitter          = config.jitter || 0.02;
 
     // Derived and starting values
     var width = elem.width;
@@ -29,21 +27,26 @@ function vumeter(elem, config){
     var draw = function(){
 
         var targetVal = parseInt(elem.dataset.val, 10);
-        if (jitter > 0 && targetVal > 0){
-            var amount = (Math.random()*jitter*max);
-            if (Math.random() > 0.5){
-                amount = -amount;
-            }
-            targetVal += amount;
-        }
 
         // Gradual approach
-        if (curVal < targetVal){
+        if (curVal <= targetVal){
             curVal += (targetVal - curVal) / 5;
         } else {
             curVal -= (curVal - targetVal) / 5;
         }
-        
+
+        // Apply jitter
+        if (jitter > 0 && curVal > 0){
+            var amount = (Math.random()*jitter*max);
+            if (Math.random() > 0.5){
+                amount = -amount;
+            }
+            curVal += amount;
+        }
+        if (curVal < 0) {
+            curVal = 0;
+        }
+
         c.save();
         c.beginPath();
         c.rect(0, 0, width, height);
