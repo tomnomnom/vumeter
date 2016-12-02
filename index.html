@@ -11,7 +11,7 @@
         text-align: center;
       }
       canvas {
-        padding: 0em;
+        padding: 1em;
         margin: 0em;
       }
     </style>
@@ -30,14 +30,9 @@
       window.onload = function(){
         var demo = document.getElementById('demo');
         vumeter(demo, {
-          "boxCount": 20,
-          "boxGapFraction": 0.2,
-          "title": "Widgets Per Second", 
+          "boxCount": 15,
+          "boxGapFraction": 0.25,
           "max": 100,
-          "markInterval": 2,
-          "bigMarkInterval": 10,
-          "redLinePoint": 0.85,
-          "autoScale": false
         });
 
         var demoInput = document.getElementById('demoInput');

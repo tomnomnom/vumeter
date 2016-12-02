@@ -8,6 +8,14 @@ function vumeter(elem, config){
     var boxGapFraction  = config.boxGapFraction || 0.2;
     var jitter          = config.jitter || 0.02;
 
+    // Colours
+    var redOn     = 'rgba(255,47,30,0.9)';
+    var redOff    = 'rgba(64,12,8,0.9)';
+    var yellowOn  = 'rgba(255,215,5,0.9)';
+    var yellowOff = 'rgba(64,53,0,0.9)';
+    var greenOn   = 'rgba(53,255,30,0.9)';
+    var greenOff  = 'rgba(13,64,8,0.9)';
+
     // Derived and starting values
     var width = elem.width;
     var height = elem.height;
@@ -82,12 +90,12 @@ function vumeter(elem, config){
     function getBoxColor(id, val){
         // on colours
         if (id > boxCount - boxCountRed){
-            return isOn(id, val)? 'rgba(240,0,0,0.9)' : 'rgba(90,0,0,0.9)';
+            return isOn(id, val)? redOn : redOff;
         }
         if (id > boxCount - boxCountRed - boxCountYellow){
-            return isOn(id, val)? 'rgba(240,240,0,0.9)' : 'rgba(90,90,0,0.9)';
+            return isOn(id, val)? yellowOn : yellowOff;
         }
-        return isOn(id, val)? 'rgba(0,240,0,0.9)' : 'rgba(0,90,0,0.9)';
+        return isOn(id, val)? greenOn : greenOff;
     }
 
     function getId(index){
