@@ -36,7 +36,7 @@
         });
 
         var demoInput = document.getElementById('demoInput');
-        demoInput.onchange = function(e){
+        demoInput.oninput = function(e){
             console.log(this.value);
             demo.setAttribute('data-val', this.value);
         };
